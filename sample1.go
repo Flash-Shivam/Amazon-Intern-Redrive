@@ -4,6 +4,7 @@ import (
   "fmt"
   "flag"
   "reflect"
+  "strings"
   "github.com/aws/aws-sdk-go/aws"
   "github.com/aws/aws-sdk-go/aws/session"
   "github.com/aws/aws-sdk-go/service/sqs"
@@ -82,15 +83,35 @@ fmt.Println(reflect.TypeOf(x), *x.Body)
 svc1 := sns.New(session.New(), aws.NewConfig().WithRegion("us-east-2"))
 
 
-result1, err1 := svc1.CreateTopic(&sns.CreateTopicInput{
-        Name: aws.String(*input1),
-	})
-
-	if err1 != nil {
+result1, err1 := svc1.ListTopics(nil)
+    if err1 != nil {
         fmt.Println(err.Error())
-        
+       
+	}
+	
+	var topic_Arn string 
+
+    for _, t := range result1.Topics {
+		fmt.Println(*t.TopicArn)
+		if strings.Contains(*t.TopicArn,*input1){
+			topic_Arn = *t.TopicArn
+			break
+		}
+		
+	}
+
+
+	result, err := svc1.Publish(&sns.PublishInput{
+        Message:  aws.String("Work In Progress"),
+        TopicArn: aws.String(topic_Arn),
+    })
+    if err != nil {
+        fmt.Println(err.Error())
     }
-fmt.Println(*result1)
+
+    fmt.Println(*result.MessageId)
+	
+	fmt.Println(*input1, topic_Arn)
 
 
 }
