@@ -24,6 +24,11 @@ Parameters:
   DeploymentBucketImportName:
     Type: String
     Default: "DeploymentBucket"
+  ConsumerName:
+    Description: "Name of the enhanced fanout consumer of Kinesis Data Stream"
+    Default: "DataConsumer"
+    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
+    Type: String
 Conditions:
   UseBatsKey:
     'Fn::Equals':
@@ -88,6 +93,7 @@ Resources:
     Properties:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaKinesisExecutionRole
       - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       - arn:aws:iam::aws:policy/AmazonKinesisReadOnlyAccess
       AssumeRolePolicyDocument:
@@ -98,17 +104,37 @@ Resources:
             Service: [lambda.amazonaws.com]
         Version: '2012-10-17'
       Policies:
-      - Fn::If:
-        - RunLambdaInVPC
         - PolicyDocument:
             Statement:
-            - Action: ['ec2:CreateNetworkInterface', 'ec2:DescribeNetworkInterfaces', 'ec2:DeleteNetworkInterface']
+            - Action: ['kinesis:SubscribeToShard']
               Effect: Allow
-              Resource: '*'
+              Resource: { Ref: KEnhancedFanout }
+            - Fn::If:
+              - RunLambdaInVPC
+              - Action: ['ec2:CreateNetworkInterface', 'ec2:DescribeNetworkInterfaces', 'ec2:DeleteNetworkInterface']
+                Effect: Allow
+                Resource: '*'
+              - {Ref: 'AWS::NoValue'}
             Version: '2012-10-17'
           PolicyName: lambdaRoleAPIG
-        - {Ref: 'AWS::NoValue'}
     Type: AWS::IAM::Role
+     # KDS Enhanced fanout consumer for  Kinesis stream
+  KEnhancedFanout:
+    Type: AWS::Kinesis::StreamConsumer
+    Properties:
+      ConsumerName: {Ref: ConsumerName}
+      StreamARN: !FindInMap [KinesisArn, !Ref AWS::Region, !Ref Stage]
+  EventSourceMapping:
+    Type: "AWS::Lambda::EventSourceMapping"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - AuditTrailWriterLambda
+          - Arn
+      EventSourceArn: { "Ref": "KEnhancedFanout" }
+      StartingPosition: LATEST
+      BatchSize: 100 # number of records
+
 Outputs:
   StackArn:
     Value:
