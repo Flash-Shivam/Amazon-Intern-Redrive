@@ -1,6 +1,9 @@
 <h1>Redriver</h1>
 
 **Redriver** is a tool for moving AWS SQS messages from one queue (DLQ) to invoke(trigger) a lambda function through a SNS topic 
+<h1>Preview</h1>
+
+![](https://github.com/Flash-Shivam/Amazon-Intern-Redrive/blob/master/Screenshot%20(190).png)
 
 ![](https://i.makeagif.com/media/6-17-2020/tUyD3z.gif)
 
