@@ -29,7 +29,7 @@ aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
 ```
 
 
-The [default] heading defines credentials for the default profile, which the SQSMover will use unless you configure it to use another profile.
+The [default] heading defines credentials for the default profile, which the Redriver will use unless you configure it to use another profile.
 
 Optionally you can configure default region in ~/.aws/config
 
