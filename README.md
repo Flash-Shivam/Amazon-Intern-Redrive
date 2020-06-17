@@ -5,9 +5,7 @@
 
 ![](https://github.com/Flash-Shivam/Amazon-Intern-Redrive/blob/master/Screenshot%20(190).png)
 
-![](https://i.makeagif.com/media/6-17-2020/tUyD3z.gif)
-
-<h1>Feautures</h1>
+<h1>Features</h1>
 
 - Queue name resolution. For ease of use, you only need to provide a queue name and not the full arn address.
 
@@ -54,4 +52,4 @@ git clone https://github.com/Flash-Shivam/Amazon-Intern-Redrive
 usage: go run sample1.go -s SOURCE -f LAMBDAFUNCTIONNAME
 ```
 
-Region will default to us-east-2, you can also override it with --region flag
+Region will be set default to us-east-2, you can also override it with --region flag
