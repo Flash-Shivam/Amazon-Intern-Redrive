@@ -8,6 +8,7 @@ sqs = boto3.client('sqs')
 
 def lambda_handler(event, context):
     name = event['Name']
+    func_name = event['FunctionName']
     account_id = event['AccountID']
     
     response1 = sqs.get_queue_url(
@@ -35,6 +36,7 @@ def lambda_handler(event, context):
     
     while True :
         for i in range(0, len(x)):
+            # sample input for invoking lambda may very depending upon the lambda to be invoked 
             inputforinvoker = {
         'MessageId':  x[i]['MessageId'],
         'Type': 'Notification',
@@ -43,7 +45,7 @@ def lambda_handler(event, context):
     }
             
             response3 = client.invoke(
-        FunctionName = 'LambdaToInvoke',
+        FunctionName = func_name,
         InvocationType = 'RequestResponse',
         Payload=json.dumps(inputforinvoker)
         )
