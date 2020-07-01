@@ -40,6 +40,9 @@ region=us-east-2
 
 You will need to have Golang installed.
 
+First create a SNS Topic named 'TestTopic'. While configuring the lambda that is to be invoked , add the SNS Topic as one of the trigger .See the picture for better understanding .
+
+![](https://github.com/Flash-Shivam/Amazon-Intern-Redrive/blob/master/Screenshot%20(222).png)
 
 ```
 git clone https://github.com/Flash-Shivam/Amazon-Intern-Redrive
